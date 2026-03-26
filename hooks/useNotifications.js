@@ -33,7 +33,7 @@ export default function useNotifications() {
       // Get the Expo push token for this device
       try {
         const pushTokenData = await Notifications.getExpoPushTokenAsync({
-          projectId: 'b5341bb9-4e49-43a9-afe3-86eca9ac3a97', // from app.json > extra.eas.projectId
+          projectId: '8b9f11f2-bd90-4df9-9f19-c15e93c6d93e', // from app.json > extra.eas.projectId
         });
         console.log('Expo Push Token:', pushTokenData);
         setExpoPushToken(pushTokenData.data);

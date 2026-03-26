@@ -1,1 +1,1 @@
-export const BASE_URL = 'https://precartilaginous-sciential-almeda.ngrok-free.dev';
+export const BASE_URL = 'https://darian-autoloading-nelly.ngrok-free.dev';
