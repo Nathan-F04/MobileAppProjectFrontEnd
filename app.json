@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ShopDemo",
-    "slug": "ShopDemo",
+    "name": "MarketApp",
+    "slug": "marketapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,7 +22,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.ShopDemo"
+      "package": "com.anonymous.Project"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -37,11 +37,11 @@
       ],
       "expo-secure-store"
     ],
+    "owner": "nathan-f04",
     "extra": {
       "eas": {
-        "projectId": "b5341bb9-4e49-43a9-afe3-86eca9ac3a97"
+        "projectId": "8b9f11f2-bd90-4df9-9f19-c15e93c6d93e"
       }
-    },
-    "owner": "fergusdowney"
+    }
   }
 }
