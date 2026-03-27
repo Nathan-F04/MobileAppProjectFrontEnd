@@ -81,14 +81,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: "700",
-    paddingTop: 200,
+    paddingTop: 150,
     paddingBottom: 150,
     backgroundColor: "lightblue",
     textAlign: "center",
     borderBottomLeftRadius: 500,
     borderBottomRightRadius: 500,
   },
-  gap: { margin: 50 },
+  gap: { margin: 10 },
   input: {
     borderWidth: 1,
     borderRadius: 6,
