@@ -1,7 +1,7 @@
 // InventoryScreen
-// - Purpose: Orchestrates the inventory UI: shows car list and provides add/edit/delete flows.
-// - Key inputs: none (uses internal state and the `useProducts` hook to fetch/manage cars).
-// - Key outputs: renders AddEditCar form, car list (CarItem), and invokes create/update/delete via the hook.
+// - Purpose: Orchestrates the inventory UI: shows product list and provides add/edit/delete flows.
+// - Key inputs: none (uses internal state and the `useProducts` hook to fetch/manage products).
+// - Key outputs: renders AddEditProduct form, product list (ProductItem), and invokes create/update/delete via the hook.
 // - Notes: This file should remain orchestration-only: UI and logic for form, image picking, and API calls are delegated to components and hooks.
 
 import React, { useEffect, useState } from 'react';
@@ -16,49 +16,42 @@ import {
 } from 'react-native';
 
 import ProductItem from '../components/ProductItem';
-import CarItem from '../components/CarItem';
 import AddEditProduct from '../components/AddEditProduct';
-import AddEditCar from '../components/AddEditCar';
 import useProducts from '../hooks/useProducts';
-import useCars from '../hooks/useCars';
 import useNotifications from '../hooks/useNotifications';
 
 export default function InventoryScreen() {
-  const { cars, loading, posting, fetchCars, createCar, updateCar, deleteCar } = useCars();
+  const { products, loading, posting, fetchProducts, createProduct, updateProduct, deleteProduct } = useProducts();
   const { expoPushToken } = useNotifications();
 
   const [editingId, setEditingId] = useState(null);
-  const [model, setModel] = useState('');
-  const [licensePlate, setLicensePlate] = useState('');
-  const [year, setYear] = useState('');
+  const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
   // --- Simplified alternative: group all form fields into one state object ---
-  // const [form, setForm] = useState({ model: '', licensePlate: '', year: '', price: '', description: '', image: null });
+  // const [form, setForm] = useState({ name: '', price: '', description: '', image: null });
   // Update a single field with: setForm(prev => ({ ...prev, name: 'new value' }))
   // Pass to AddEditProduct as: <AddEditProduct form={form} setForm={setForm} ... />
   // (replaces the five individual useState calls above and reduces prop count)
 
   useEffect(() => {
-    fetchCars();
+    fetchProducts();
   }, []);
 
-  async function saveCar() {
-    if (!model.trim()) return Alert.alert('Validation', 'Model is required');
-    const parsedYear = parseInt(year);
+  async function saveProduct() {
+    if (!name.trim()) return Alert.alert('Validation', 'Name is required');
     const parsedPrice = parseFloat(price);
     if (price && Number.isNaN(parsedPrice)) return Alert.alert('Validation', 'Price must be a number');
-    if (year && Number.isNaN(parsedYear)) return Alert.alert('Validation', 'Year must be a number');
 
     try {
-      const body = { model: model.trim(), licensePlate: licensePlate.trim(), year: year ? parsedYear : undefined, price: price ? parsedPrice : undefined, description: description.trim(), image };
+      const body = { name: name.trim(), price: price ? parsedPrice : undefined, description: description.trim(), image };
       if (editingId) {
-        await updateCar(editingId, body);
+        await updateProduct(editingId, body);
         setEditingId(null);
-        Alert.alert('Success', 'Car updated');
+        Alert.alert('Success', 'Product updated');
       } else {
-        await createCar(body);
+        await createProduct(body);
         //Alert.alert('Success', 'Product added');
         if (expoPushToken) {
           console.log('[Push] Sending to token:', expoPushToken);
@@ -68,7 +61,7 @@ export default function InventoryScreen() {
             body: JSON.stringify({
               to: expoPushToken,
               title: 'Store updated',
-              body: `${model.trim()} has been added. Browse the inventory to see the latest cars!`,
+              body: `${name.trim()} has been added. Browse the inventory to see the latest products!`,
             }),
           })
             .then(res => res.json())
@@ -79,9 +72,7 @@ export default function InventoryScreen() {
         }
       }
 
-      setModel('');
-      setLicensePlate('');
-      setYear('');
+      setName('');
       setPrice('');
       setDescription('');
       setImage(null);
@@ -92,30 +83,24 @@ export default function InventoryScreen() {
 
   function onEditPress(item) {
     setEditingId(item._id || item.id || null);
-    setModel(item.model || '');
-    setLicensePlate(item.licensePlate || '');
-    setYear(item.year !== undefined && item.year !== null ? String(item.year) : '');
+    setName(item.name || '');
     setPrice(item.price !== undefined && item.price !== null ? String(item.price) : '');
     setDescription(item.description || '');
     setImage(item.image || null);
   }
 
   function renderItem({ item }) {
-    return <CarItem item={item} onEdit={onEditPress} onDelete={deleteCar} />;
+    return <ProductItem item={item} onEdit={onEditPress} onDelete={deleteProduct} />;
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Inventory</Text>
 
-      <AddEditCar
+      <AddEditProduct
         editingId={editingId}
-        model={model}
-        setModel={setModel}
-        licensePlate={licensePlate}
-        setLicensePlate={setLicensePlate}
-        year={year}
-        setYear={setYear}
+        name={name}
+        setName={setName}
         price={price}
         setPrice={setPrice}
         description={description}
@@ -123,16 +108,16 @@ export default function InventoryScreen() {
         image={image}
         setImage={setImage}
         posting={posting}
-        onSave={saveCar}
-        onRefresh={fetchCars}
+        onSave={saveProduct}
+        onRefresh={fetchProducts}
       />
 
-      <Text style={styles.header}>Cars</Text>
+      <Text style={styles.header}>Products</Text>
 
       {loading ? (
         <ActivityIndicator size="large" />
       ) : (
-        <FlatList data={cars} keyExtractor={(item, idx) => item._id || item.id || String(idx)} renderItem={renderItem} ListEmptyComponent={<Text style={styles.empty}>No cars found.</Text>} contentContainerStyle={cars.length === 0 ? styles.emptyContainer : null} />
+        <FlatList data={products} keyExtractor={(item, idx) => item._id || item.id || String(idx)} renderItem={renderItem} ListEmptyComponent={<Text style={styles.empty}>No products found.</Text>} contentContainerStyle={products.length === 0 ? styles.emptyContainer : null} />
       )}
 
       <StatusBar style="auto" />

@@ -59,7 +59,7 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.center}>
         <Text style={styles.title}>Welcome to ShopDemo</Text>
         <View style={{ height: 8 }} />
-        <Button title="Browse Products" onPress={() => navigation.navigate('ProductBrowser')} />
+        <Button title="Browse Products" onPress={() => navigation.navigate('CarBrowser')} />
       </View>
 
       <View style={styles.footer}>
