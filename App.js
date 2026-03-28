@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as Notifications from 'expo-notifications';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -15,8 +16,36 @@ import HomeScreen from './screens/HomeScreen';
 import InventoryScreen from './screens/InventoryScreen';
 import ProductBrowser from './screens/ProductBrowser';
 import ProductBasket from './screens/ProductBasket';
+import CarBasket from './screens/CarBasket';
+import CarBrowser from './screens/CarBrowser';
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+function MainTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: COLORS.textSecondary,
+        tabBarStyle: { borderTopColor: COLORS.border, backgroundColor: COLORS.card },
+        tabBarIcon: ({ focused, color, size }) => {
+          const icons = {
+            Home:         focused ? 'home'      : 'home-outline',
+            Listings: focused ? 'list'      : 'list-outline',
+            Basket:      focused ? 'bar-chart' : 'bar-chart-outline',
+          };
+          return <Ionicons name={icons[route.name]} size={size} color={color} />;
+        },
+      })}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="My Listings" component={InventoryScreen} />
+      <Tab.Screen name="Basket" component={CarBasket} />
+    </Tab.Navigator>
+  );
+}
 
 function Navigation() {
   const { token, loading } = useAuth();
@@ -27,7 +56,7 @@ function Navigation() {
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
       console.log('Notification response received:', response);
       console.log('[Notification tapped] navigating to basket');
-      navigationRef.current?.navigate('ProductBasket');
+      navigationRef.current?.navigate('CarBasket');
     });
     return () => subscription.remove();
   }, []);
@@ -46,6 +75,9 @@ function Navigation() {
             <Stack.Screen name="Inventory" component={InventoryScreen} options={{ title: 'Inventory' }} />
             <Stack.Screen name="ProductBrowser" component={ProductBrowser} options={{ title: 'Products' }} />
             <Stack.Screen name="ProductBasket" component={ProductBasket} options={{ title: 'Basket' }} />
+            <Stack.Screen name="CarBrowser" component={CarBrowser} options={{ title: 'Cars' }} />
+            <Stack.Screen name="CarBasket" component={CarBasket} options={{ title: 'Basket' }} />
+            <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
           </>
         ) : (
           // Auth screens

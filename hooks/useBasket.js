@@ -29,24 +29,24 @@ export default function useBasket(userId) {
     }
   }
 
-  // getProductId: extract productId from a basket item regardless of whether
-  // the product field is a raw id string (not populated) or a full object (populated).
-  // Returns null if the product has been deleted or is missing.
-  function getProductId(item) {
-    const raw = item?.product;
+  // getCarId: extract carId from a basket item regardless of whether
+  // the car field is a raw id string (not populated) or a full object (populated).
+  // Returns null if the car has been deleted or is missing.
+  function getCarId(item) {
+    const raw = item?.car;
     if (!raw) return null;
     if (typeof raw === 'string') return raw;
     return raw._id || raw.id || null;
   }
 
   // changeQuantity: decrement item qty by 1, or remove entirely when removeAll is true.
-  // Throws if productId cannot be determined (e.g. product was deleted).
+  // Throws if carId cannot be determined (e.g. car was deleted).
   async function changeQuantity(item, removeAll = false) {
-    const productId = getProductId(item);
-    if (!productId) throw new Error('Item refers to a deleted product. Please refresh to remove stale items.');
+    const carId = getCarId(item);
+    if (!carId) throw new Error('Item refers to a deleted car. Please refresh to remove stale items.');
     setLoading(true);
     try {
-      await basketApi.removeFromBasket({ userId, productId, removeAll });
+      await basketApi.removeFromBasket({ userId, carId, removeAll });
       await loadBasket();
     } finally {
       setLoading(false);
@@ -54,13 +54,13 @@ export default function useBasket(userId) {
   }
 
   // incrementQuantity: increase item qty by 1.
-  // Throws if productId cannot be determined.
+  // Throws if carId cannot be determined.
   async function incrementQuantity(item) {
-    const productId = getProductId(item);
-    if (!productId) throw new Error('Item refers to a deleted product. Please refresh to remove stale items.');
+    const carId = getCarId(item);
+    if (!carId) throw new Error('Item refers to a deleted car. Please refresh to remove stale items.');
     setLoading(true);
     try {
-      await basketApi.addToBasket({ userId, productId, quantity: 1 });
+      await basketApi.addToBasket({ userId, carId, quantity: 1 });
       await loadBasket();
     } finally {
       setLoading(false);
@@ -68,7 +68,7 @@ export default function useBasket(userId) {
   }
 
   // total: sum of (price × quantity) for all items in the basket
-  const total = (basket.items || []).reduce((s, it) => s + (it.product?.price ?? 0) * it.quantity, 0);
+  const total = (basket.items || []).reduce((s, it) => s + (it.car?.price ?? 0) * it.quantity, 0);
 
   return {
     basket,

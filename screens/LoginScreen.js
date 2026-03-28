@@ -61,7 +61,7 @@ export default function LoginScreen({ navigation }) {
             <Button title="Login" onPress={handleLogin} />
             <View style={{ height: 12 }} />
             <Button
-              title="Register"
+              title="Create Account"
               onPress={() => navigation.navigate("Register")}
             />
           </>
